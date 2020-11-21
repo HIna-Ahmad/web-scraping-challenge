@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Mars</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="jumbotron text-center">
+            <h1>Mission to Mars</h1>
+            <p><a class="btn btn-primary btn-lg" href="/scrape" role="button">Scrape New Data</a></p>
+        </div>
+
+        
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="heading">Latest Mars News </h4>
+                <h3>{{mars_mongo_db.title}}</h3>
+                <p>{{mars_mongo_db.paragraph}}</p>
+            </div>
+        </div>
+        <div class ="row">
+            <div class="col-md-8">
+                <h3>Feature Image</h3>
+                <div class = "col-md-12">
+                    <img src = "{{mars_mongo_db.featured_image_url}}">
+
+                </div>
+            </div>
+            <div class ="col-md-4">
+            <div class ="table-responsive" style = "overflow-x:auto; overflow-y:auto; max-height:470px; max-width: auto;">
+                <table border="1" class="dataframe">
+                    <thead>
+                        <tr style="text-align: right;">
+                            <th></th>
+                            <th>Mars - Earth Comparison</th>
+                            <th>Mars</th>
+                            <th>Earth</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>0</th>
+                            <td>Diameter:</td>
+                            <td>6,779 km</td>
+                            <td>12,742 km</td>
+                        </tr>
+                        <tr>
+                            <th>1</th>
+                            <td>Mass:</td>
+                            <td>6.39 × 10^23 kg</td>
+                            <td>5.97 × 10^24 kg</td>
+                        </tr>
+                        <tr>
+                            <th>2</th>
+                            <td>Moons:</td>
+                            <td>2</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <th>3</th>
+                            <td>Distance from Sun:</td>
+                            <td>227,943,824 km</td>
+                            <td>149,598,262 km</td>
+                        </tr>
+                        <tr>
+                            <th>4</th>
+                            <td>Length of Year:</td>
+                            <td>687 Earth days</td>
+                            <td>365.24 days</td>
+                        </tr>
+                        <tr>
+                            <th>5</th>
+                            <td>Temperature:</td>
+                            <td>-87 to -5 °C</td>
+                            <td>-88 to 58°C</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>    
+            </div>
+        </div>
+        <div class = "row">
+            <div class="col-md-8 offset-4">
+                <h2 class ="align-items-center"><u>Mars Hemisphere</u></h2>
+            </div>
+        </div>
+        <div class ="row">
+            {% for image in mars_mongo_db.}
+        </div>
+
+
+    </div>
+</body>
+
+</html>
