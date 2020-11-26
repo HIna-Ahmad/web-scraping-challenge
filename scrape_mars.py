@@ -1,135 +1,95 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
-import pandas as pd
-from bs4 import BeautifulSoup
-import requests
+from flask import Flask, render_template, redirect
 import pymongo
 from splinter import Browser
-import os
-from flask import Flask, render_template, redirect
+from bs4 import BeautifulSoup as bs
+import pandas as pd
+import time
+from selenium import webdriver
 
+# create an instanace of our Flask app.
+app = Flask(__name__)
 
-# In[2]:
+# create connection variable
+conn = "mongodb://localhost:27017"
 
-
-# Initialize PyMongo to work with MongoDBs
-conn = 'mongodb://localhost:27017'
+# pass connection to the pymongo instance
 client = pymongo.MongoClient(conn)
 
+# connect to a database - it will create one if not already available
+db = client.mars
 
-# In[3]:
+db.mars.drop()
 
+# create collection of mars hemisphere urls
+image_url = db.image_url
 
-# Define database and collection
-db = client.mars_db
-collection = db.items
+# select COLLECTION in the db and INSERT DOCUMENTS
 
-
-# In[19]:
-
-
-executable_path = {"executable_path": "/usr/local/bin/chromedriver"}
-browser = Browser("chrome", **executable_path)
-
-
-# In[5]:
-
-
-url = 'https://mars.nasa.gov/news/?page=0&per_page=40&order=publish_date+desc%2Ccreated_at+desc&search=&category=19%2C165%2C184%2C204&blank_scope=Latest'
-browser.visit(url)
-
-
-# In[6]:
-
-
-# Retrieve page with the requests module
-response = requests.get(url)
-html = browser.html
-# Create BeautifulSoup object; parse with 'html.parser'
-soup = BeautifulSoup(html, 'html.parser')
-
-
-# In[7]:
+image_url.insert_many(
+    [
+        {
+            "title": "Cerberus Hemisphere",
+            "img_url": "https://astrogeology.usgs.gov/search/map/Mars/Viking/cerberus_enhanced",
+        },
+        {
+            "title": "Schiaparelli Hemisphere",
+            "img_url": "https://astrogeology.usgs.gov/search/map/Mars/Viking/schiaparelli_enhanced",
+        },
+        {
+            "title": "Syrtis Major Hemisphere",
+            "img_url": "https://astrogeology.usgs.gov/search/map/Mars/Viking/syrtis_major_enhanced",
+        },
+        {
+            "title": "Valles Marineris Hemisphere",
+            "img_url": "https://astrogeology.usgs.gov/search/map/Mars/Viking/valles_marineris_enhanced",
+        },
+    ]
+)
 
 
-title = soup.find_all('div', class_='content_title')[1].text
-title
+def init_browser():
+
+    # @NOTE: Replace the path with your actual path to the chromedriver
+    executable_path = {
+        "executable_path": "/Users/hinaahmad/Desktop/drivers/chromedriver"}
+    return Browser("chrome", **executable_path, headless=False)
+    #driver = webdriver.Chrome()
 
 
-# In[8]:
+def scrape_info():
 
+    browser = init_browser()
+    url = "https: // mars.nasa.gov/news /?page = 0 & per_page = 40 & order = publish_date+desc % 2Ccreated_at+desc & search = &category = 19 % 2C165 % 2C184 % 2C204 & blank_scope = Latest"
+    # driver.get("https://mars.nasa.gov/news/?page=0&per_page=40&order=publish_date+desc%2Ccreated_at+desc&search=&category=19%2C165%2C184%2C204&blank_scope=Latest")
+    browser.visit(url)
 
-paragraph = soup.find_all('div', class_='article_teaser_body')[0].text
-paragraph
+    time.sleep(1)
 
+    html = browser.html
+    soup = bs(html, "html.parser")
 
-# In[20]:
+    # get the title
+    title = soup.find_all("div", class_="content_title")[1].text
 
+    # get the paragraph
+    paragraph = soup.find_all("div", class_="article_teaser_body")[0].text
 
-featured_image_url = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
-browser.visit(featured_image_url)
+    # get the featured image url
+    featured_image_url = "https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars"
+    # Find the element and attribute for the background image
+    relative_featimage_path = soup.find_all("img")[1]["src"]
 
+    url_featimage_path = featured_image_url + relative_featimage_path
 
-# In[18]:
+    # store data in a dictionary
 
+    mars_data = {
+        "title": title,
+        "paragraph": paragraph,
+        "url_geatimage_path": url_featimage_path,
+    }
 
-about_url = 'https://space-facts.com/mars/'
-dfs = pd.read_html(about_url)
+    # close the browser after scraping
+    browser.quit()
 
-
-# In[11]:
-
-
-table2= dfs[1]
-table2
-
-
-# In[12]:
-
-
-table2_df = table2
-table2_df
-
-
-# In[13]:
-
-
-about_html_table = table2_df.to_html()
-print(about_html_table)
-
-
-# In[28]:
-
-
-hemisphere_images_url = [
-    {"title":"Cerberus Hemisphere", "img_url":"https://astrogeology.usgs.gov/search/map/Mars/Viking/cerberus_enhanced"},
-    {"title":"Schiaparelli Hemisphere", "img_url":"https://astrogeology.usgs.gov/search/map/Mars/Viking/schiaparelli_enhanced"},
-    {"title":"Syrtis Major Hemisphere", "img_url":"https://astrogeology.usgs.gov/search/map/Mars/Viking/syrtis_major_enhanced"},
-    {"title":"Valles Marineris Hemisphere", "img_url":"https://astrogeology.usgs.gov/search/map/Mars/Viking/valles_marineris_enhanced"},
-]
-
-hemisphere_images_url
-
-
-# In[30]:
-
-
-mars_breakdown = {
-    "title": title,
-    "paragraph": paragraph,
-    "featured_image_url": featured_image_url,
-    "about_url": about_url,
-    "hemisphere_images_url": hemisphere_images_url
-}
-mars_breakdown
-
-
-# In[ ]:
-
-
-
-
+    return mars_data

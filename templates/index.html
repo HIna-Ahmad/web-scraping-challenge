@@ -21,15 +21,15 @@
         <div class="row">
             <div class="col-md-12">
                 <h4 class="heading">Latest Mars News </h4>
-                <h3>{{mars_mongo_db.title}}</h3>
-                <p>{{mars_mongo_db.paragraph}}</p>
+                <h3>{{mars.title}}</h3>
+                <p>{{mars.paragraph}}</p>
             </div>
         </div>
         <div class ="row">
             <div class="col-md-8">
                 <h3>Feature Image</h3>
                 <div class = "col-md-12">
-                    <img src = "{{mars_mongo_db.featured_image_url}}">
+                    <img src = "{{mars.relative_featimage_url}}">
 
                 </div>
             </div>
@@ -91,12 +91,20 @@
                 <h2 class ="align-items-center"><u>Mars Hemisphere</u></h2>
             </div>
         </div>
-        <div class ="row">
-            {% for image in mars_mongo_db.}
+        <div>
+            <ul style="list-style: non;">
+            {% for image_url in db %}
+                <li>{{ mars.title }}: {{mars.img_url }}</li>
+            {% endfor %}
+            </ul>
         </div>
 
 
     </div>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous">
+    </script>
 </body>
 
 </html>
