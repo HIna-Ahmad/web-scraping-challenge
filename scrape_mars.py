@@ -59,7 +59,7 @@ def init_browser():
 def scrape_info():
 
     browser = init_browser()
-    url = "https: // mars.nasa.gov/news /?page = 0 & per_page = 40 & order = publish_date+desc % 2Ccreated_at+desc & search = &category = 19 % 2C165 % 2C184 % 2C204 & blank_scope = Latest"
+    url = "https://mars.nasa.gov/news"
     # driver.get("https://mars.nasa.gov/news/?page=0&per_page=40&order=publish_date+desc%2Ccreated_at+desc&search=&category=19%2C165%2C184%2C204&blank_scope=Latest")
     browser.visit(url)
 
@@ -81,12 +81,37 @@ def scrape_info():
 
     url_featimage_path = featured_image_url + relative_featimage_path
 
+    about_url = 'https://space-facts.com/mars/'
+    dfs = pd.read_html(about_url)[1]
+    table_html = dfs.to_html()
+
+    hemispheres = [
+        {
+            "title": "Cerberus Hemisphere",
+            "img_url": "https://astropedia.astrogeology.usgs.gov/download/Mars/Viking/cerberus_enhanced.tif/full.jpg",
+        },
+        {
+            "title": "Schiaparelli Hemisphere",
+            "img_url": "https://astropedia.astrogeology.usgs.gov/download/Mars/Viking/schiaparelli_enhanced.tif/full.jpg"
+        },
+        {
+            "title": "Syrtis Major Hemisphere",
+            "img_url": "https://astropedia.astrogeology.usgs.gov/download/Mars/Viking/syrtis_major_enhanced.tif/full.jpg",
+        },
+        {
+            "title": "Valles Marineris Hemisphere",
+            "img_url": "https://astropedia.astrogeology.usgs.gov/download/Mars/Viking/valles_marineris_enhanced.tif/full.jpg",
+        },
+    ]
+
     # store data in a dictionary
 
     mars_data = {
         "title": title,
         "paragraph": paragraph,
-        "url_geatimage_path": url_featimage_path,
+        "url_featimage_path": url_featimage_path,
+        "hemispheres": hemispheres,
+        "mars_facts": table_html
     }
 
     # close the browser after scraping

@@ -24,8 +24,8 @@ mongo = PyMongo(app)
 @app.route("/", methods=["GET"])
 def index():
     # store the entire image_url collection in a list
-    mars_list = list(db.mars.find())
-    return render_template("index_html", mars_hem_list=mars_list)
+    mars_list = mongo.db.mars.find_one()
+    return render_template("index.html", mars_hem_list=mars_list)
 
 
 @app.route("/scrape", methods=["GET"])
