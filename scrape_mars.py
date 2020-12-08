@@ -75,34 +75,86 @@ def scrape_info():
     paragraph = soup.find_all("div", class_="article_teaser_body")[0].text
 
     # get the featured image url
-    featured_image_url = "https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars"
+
+    featured_image_url = "https://www.jpl.nasa.gov/spaceimages"
+    browser.visit(featured_image_url)
+    browser.links.find_by_partial_text("FULL IMAGE").click()
     # Find the element and attribute for the background image
-    relative_featimage_path = soup.find_all("img")[1]["src"]
+    browser.links.find_by_partial_text("more info").click()
+    time.sleep(2)
+    html = browser.html
+    soup = bs(html, 'html.parser')
+    relative_featimage_path = soup.find_all('figure', class_='lede')[0]
+    image = relative_featimage_path.find_all("a", href=True)[0]
+    relative_featimage_path = image["href"]
+    url_featimage_path = "https://www.jpl.nasa.gov" + relative_featimage_path
 
-    url_featimage_path = featured_image_url + relative_featimage_path
-
+    print(url_featimage_path)
     about_url = 'https://space-facts.com/mars/'
     dfs = pd.read_html(about_url)[1]
     table_html = dfs.to_html()
 
-    hemispheres = [
-        {
-            "title": "Cerberus Hemisphere",
-            "img_url": "https://astropedia.astrogeology.usgs.gov/download/Mars/Viking/cerberus_enhanced.tif/full.jpg",
-        },
-        {
-            "title": "Schiaparelli Hemisphere",
-            "img_url": "https://astropedia.astrogeology.usgs.gov/download/Mars/Viking/schiaparelli_enhanced.tif/full.jpg"
-        },
-        {
-            "title": "Syrtis Major Hemisphere",
-            "img_url": "https://astropedia.astrogeology.usgs.gov/download/Mars/Viking/syrtis_major_enhanced.tif/full.jpg",
-        },
-        {
-            "title": "Valles Marineris Hemisphere",
-            "img_url": "https://astropedia.astrogeology.usgs.gov/download/Mars/Viking/valles_marineris_enhanced.tif/full.jpg",
-        },
-    ]
+    hemisphere_image_urls = []
+
+    url = "https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars"
+    browser.visit(url)
+    browser.links.find_by_partial_text("Hemisphere Enhanced")[0].click()
+    html = browser.html
+    soup = bs(html, 'html.parser')
+    download = soup.find_all('div', class_='downloads')[0]
+    image = download.find_all("a", href=True)[0]
+    sample = image["href"]
+    image_title = soup.find_all('h2', class_='title')[0]
+    hemisphere = {}
+    hemisphere['img_url'] = sample
+    hemisphere['title'] = image_title.get_text()
+    hemisphere_image_urls.append(hemisphere)
+    browser.back()
+
+    url = "https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars"
+    browser.visit(url)
+    browser.links.find_by_partial_text("Hemisphere Enhanced")[1].click()
+    html = browser.html
+    soup = bs(html, 'html.parser')
+    download = soup.find_all('div', class_='downloads')[0]
+    image = download.find_all("a", href=True)[0]
+    sample = image["href"]
+    image_title = soup.find_all('h2', class_='title')[0]
+    hemisphere = {}
+    hemisphere['img_url'] = sample
+    hemisphere['title'] = image_title.get_text()
+    hemisphere_image_urls.append(hemisphere)
+    browser.back()
+
+    url = "https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars"
+    browser.visit(url)
+    browser.links.find_by_partial_text("Hemisphere Enhanced")[2].click()
+    html = browser.html
+    soup = bs(html, 'html.parser')
+    download = soup.find_all('div', class_='downloads')[0]
+    image = download.find_all("a", href=True)[0]
+    sample = image["href"]
+    image_title = soup.find_all('h2', class_='title')[0]
+    hemisphere = {}
+    hemisphere['img_url'] = sample
+    hemisphere['title'] = image_title.get_text()
+    hemisphere_image_urls.append(hemisphere)
+    browser.back()
+
+    url = "https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars"
+    browser.visit(url)
+    browser.links.find_by_partial_text("Hemisphere Enhanced")[3].click()
+    html = browser.html
+    soup = bs(html, 'html.parser')
+    download = soup.find_all('div', class_='downloads')[0]
+    image = download.find_all("a", href=True)[0]
+    sample = image["href"]
+    image_title = soup.find_all('h2', class_='title')[0]
+    hemisphere = {}
+    hemisphere['img_url'] = sample
+    hemisphere['title'] = image_title.get_text()
+    hemisphere_image_urls.append(hemisphere)
+    browser.back()
 
     # store data in a dictionary
 
@@ -110,7 +162,7 @@ def scrape_info():
         "title": title,
         "paragraph": paragraph,
         "url_featimage_path": url_featimage_path,
-        "hemispheres": hemispheres,
+        "hemispheres": hemisphere_image_urls,
         "mars_facts": table_html
     }
 
